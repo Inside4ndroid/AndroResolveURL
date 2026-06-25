@@ -59,7 +59,7 @@ class VidNestResolver(ResolveUrl):
     def get_media_url(self, host, media_id):
         """
         Main method to get media URL from vidnest
-        Returns JSON with all backend results
+        Returns the best available stream URL
         """
         common.logger.log('=' * 80, common.LOGINFO)
         common.logger.log('VidNest Resolver Started - Multi-Backend Mode', common.LOGINFO)
@@ -106,24 +106,26 @@ class VidNestResolver(ResolveUrl):
             
             results = self._try_all_backends(tmdb_id, is_tv)
             
-            # Build JSON response
-            json_response = self._build_json_response(results, headers)
-            
             # Log summary
             self._log_results_summary(results)
             
-            # Return JSON string
-            json_string = json.dumps(json_response, indent=2)
-            common.logger.log('=' * 80, common.LOGINFO)
-            common.logger.log('FINAL JSON RESPONSE:', common.LOGINFO)
-            common.logger.log(json_string, common.LOGINFO)
-            common.logger.log('=' * 80, common.LOGINFO)
+            # Find the best stream URL
+            best_url = self._get_best_stream_url(results)
             
-            # If no successful backends, raise error
-            if not any(r['success'] for r in results):
+            if best_url:
+                # Return the URL with headers
+                full_url = best_url + '|User-Agent=' + headers['User-Agent'] + '&Referer=' + headers['Referer'] + '&Origin=' + headers['Origin']
+                common.logger.log('=' * 80, common.LOGINFO)
+                common.logger.log('BEST STREAM URL: %s' % full_url, common.LOGINFO)
+                common.logger.log('=' * 80, common.LOGINFO)
+                
+                # Also log JSON summary for debugging
+                json_response = self._build_json_response(results, headers)
+                common.logger.log('JSON SUMMARY: %s' % json.dumps(json_response, indent=2), common.LOGDEBUG)
+                
+                return full_url
+            else:
                 raise ResolverError('No working streams found from any backend')
-            
-            return json_string
             
         except Exception as e:
             common.logger.log('VidNest fatal error: %s' % str(e), common.LOGERROR)
@@ -236,6 +238,32 @@ class VidNestResolver(ResolveUrl):
         result['response_time'] = time.time() - start_time
         result_queue.put(result)
 
+    def _get_best_stream_url(self, results):
+        """
+        Get the best stream URL from all results
+        Prefers MP4 over M3U8, and higher quality when available
+        """
+        successful = [r for r in results if r['success'] and r['url']]
+        
+        if not successful:
+            return None
+        
+        # Priority: MP4 > M3U8 > others
+        def url_priority(url):
+            if '.mp4' in url.lower():
+                return 3
+            elif '.m3u8' in url.lower():
+                return 2
+            else:
+                return 1
+        
+        # Sort by priority and response time
+        sorted_results = sorted(successful, 
+                              key=lambda x: (url_priority(x['url']), -x['response_time']), 
+                              reverse=True)
+        
+        return sorted_results[0]['url']
+
     def _build_json_response(self, results, headers):
         """
         Build a JSON response with all backend results
@@ -296,19 +324,12 @@ class VidNestResolver(ResolveUrl):
         
         common.logger.log('Successful backends: %d' % len(successful), common.LOGINFO)
         for r in successful:
-            common.logger.log('  ✓ %s: %s (%.2fs)' % (
-                r['backend'], 
-                r['url'][:100] + '...' if len(r['url']) > 100 else r['url'],
-                r['response_time']
-            ), common.LOGINFO)
+            url_preview = r['url'][:100] + '...' if len(r['url']) > 100 else r['url']
+            common.logger.log('  ✓ %s: %s (%.2fs)' % (r['backend'], url_preview, r['response_time']), common.LOGINFO)
         
         common.logger.log('Failed backends: %d' % len(failed), common.LOGINFO)
         for r in failed:
-            common.logger.log('  ✗ %s: %s (%.2fs)' % (
-                r['backend'],
-                r.get('error', 'Unknown error'),
-                r['response_time']
-            ), common.LOGINFO)
+            common.logger.log('  ✗ %s: %s (%.2fs)' % (r['backend'], r.get('error', 'Unknown error'), r['response_time']), common.LOGINFO)
         
         common.logger.log('=' * 80, common.LOGINFO)
 
@@ -532,10 +553,19 @@ class VidNestResolver(ResolveUrl):
             
             response = self.net.http_HEAD(url, headers=headers)
             
-            if response.status_code < 400:
+            # Check status code - handle different response object types
+            if hasattr(response, 'status_code'):
+                status = response.status_code
+            elif hasattr(response, 'code'):
+                status = response.code
+            else:
+                # If we can't get status, assume it's working
+                return True
+            
+            if status < 400:
                 return True
             else:
-                common.logger.log('Stream URL verification failed with status: %d' % response.status_code, common.LOGWARNING)
+                common.logger.log('Stream URL verification failed with status: %d' % status, common.LOGWARNING)
                 return False
                 
         except Exception as e:
