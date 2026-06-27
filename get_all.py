@@ -11,24 +11,25 @@ import sys
 import traceback
 
 RESOLVER_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'script.module.resolveurl')
+                            'providers')
 sys.path.insert(0, RESOLVER_DIR)
 
 RESOLVERS = [
-    ('castle', 'CastleResolver'),
-    ('fsharetv', 'FshareTvResolver'),
-    ('hdhub', 'HdHubResolver'),
-    ('movieblast', 'MovieBlastResolver'),
-    ('moviesdrive', 'MoviesDriveResolver'),
-    ('netmirror', 'NetMirrorResolver'),
-    ('showbox', 'ShowBoxResolver'),
-    ('streamflix', 'StreamFlixResolver'),
-    ('vidapi', 'VidApiResolver'),
-    ('vidlink', 'VidlinkResolver'),
-    ('vidnest', 'VidNestResolver'),
-    ('vidrock', 'VidrockResolver'),
-    ('vidzee', 'VidzeeResolver'),
-    ('vixsrc', 'VixSrcResolver'),
+    ('anime.anizone', 'AniZoneResolver', 'anizone'),
+    ('tmdb.castle', 'CastleResolver', 'castle'),
+    ('tmdb.fsharetv', 'FshareTvResolver', 'fsharetv'),
+    ('tmdb.hdhub', 'HdHubResolver', 'hdhub'),
+    ('tmdb.movieblast', 'MovieBlastResolver', 'movieblast'),
+    ('tmdb.moviesdrive', 'MoviesDriveResolver', 'moviesdrive'),
+    ('tmdb.netmirror', 'NetMirrorResolver', 'netmirror'),
+    ('tmdb.showbox', 'ShowBoxResolver', 'showbox'),
+    ('tmdb.streamflix', 'StreamFlixResolver', 'streamflix'),
+    ('tmdb.vidapi', 'VidApiResolver', 'vidapi'),
+    ('tmdb.vidlink', 'VidlinkResolver', 'vidlink'),
+    ('tmdb.vidnest', 'VidNestResolver', 'vidnest'),
+    ('tmdb.vidrock', 'VidrockResolver', 'vidrock'),
+    ('tmdb.vidzee', 'VidzeeResolver', 'vidzee'),
+    ('tmdb.vixsrc', 'VixSrcResolver', 'vixsrc'),
 ]
 
 
@@ -59,18 +60,17 @@ def main():
         'total_playable_urls': 0,
     }
 
-    for module_name, class_name in RESOLVERS:
-        resolver_key = module_name
+    for module_path, class_name, resolver_key in RESOLVERS:
         sys.stderr.write(f"[{resolver_key}] Running...\n")
 
         try:
-            module = importlib.import_module(module_name)
+            module = importlib.import_module(module_path)
             ResolverClass = getattr(module, class_name)
 
             resolver_args = {'debug': args.debug}
 
             # Special handling: showbox needs ui-cookie in constructor
-            if module_name == 'showbox':
+            if resolver_key == 'showbox':
                 if not args.ui_cookie:
                     aggregated['resolvers'][resolver_key] = {
                         'status': 'skipped',
@@ -83,7 +83,7 @@ def main():
             resolver = ResolverClass(**resolver_args)
 
             # moviesdrive uses tmdb_id instead of url_or_id
-            if module_name == 'moviesdrive':
+            if resolver_key == 'moviesdrive':
                 resolve_kwargs = {
                     'tmdb_id': args.url_or_id,
                     'media_type': args.type,

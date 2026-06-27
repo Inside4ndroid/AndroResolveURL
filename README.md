@@ -6,7 +6,7 @@ A collection of standalone Python resolvers that scrape streaming URLs from vari
 
 ## Features
 
-- **14 resolvers** targeting different streaming sources
+- **15 resolvers** targeting different streaming sources
 - **Movies & TV shows** — most resolvers support both, with season/episode lookup
 - **Consistent output** — every resolver returns a unified JSON structure
 - **Aggregate mode** — run all resolvers at once with `get_all.py`
@@ -40,20 +40,20 @@ pip install -r requirements.txt
 
 ### Individual resolver
 
-Each resolver accepts a **TMDB ID** or a **TMDB URL**, plus optional media type, season, and episode.
+Each resolver accepts a **TMDB ID** or **TMDB URL**, plus optional media type, season, and episode.
 
 ```bash
-# Movie (default)
-python script.module.resolveurl/castle.py 550
+# TMDB resolver (movie)
+python providers/tmdb/castle.py 550
 
-# TV show
-python script.module.resolveurl/vidlink.py 1396 --type tv --season 1 --episode 1
+# TMDB resolver (TV show)
+python providers/tmdb/vidlink.py 1396 --type tv --season 1 --episode 1
+
+# Anime resolver
+python providers/anime/anizone.py 550
 
 # Pretty-print
-python script.module.resolveurl/fsharetv.py 550 --pretty
-
-# With debug logging
-python script.module.resolveurl/vidzee.py 550 --debug
+python providers/tmdb/fsharetv.py 550 --pretty
 ```
 
 ### Aggregate resolver
@@ -79,6 +79,16 @@ python get_all.py 1396 --type tv --season 1 --episode 1 --pretty
 ---
 
 ## Available Resolvers
+
+| Module | Class | Site | Movies | TV |
+|---|---|---|---|---|
+### Anime (`anime/`)
+
+| Module | Class | Site | Movies | TV |
+|---|---|---|---|---|
+| `anizone` | `AniZoneResolver` | AniZone (anizone.to) | ✓ | ✓ |
+
+### TMDB (`tmdb/`)
 
 | Module | Class | Site | Movies | TV |
 |---|---|---|---|---|

@@ -137,5 +137,5 @@ dmypy.json
 # KotlinExamples
 /KotlinResolvers
 /test_vidnest.py
-/script.module.resolveurl/temp_profile
+/providers/temp_profile
 /mock
