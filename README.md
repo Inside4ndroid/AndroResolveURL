@@ -87,6 +87,7 @@ python get_all.py 1396 --type tv --season 1 --episode 1 --pretty
 | Module | Class | Site | Movies | TV |
 |---|---|---|---|---|
 | `anizone` | `AniZoneResolver` | AniZone (anizone.to) | ✓ | ✓ |
+| `hianime` | `HiAnimeResolver` | HiAnime (MegaPlay/Vidwish/MegaCloud) | ✓ | ✓ |
 
 ### TMDB (`tmdb/`)
 

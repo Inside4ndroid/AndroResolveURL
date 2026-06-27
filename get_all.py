@@ -16,6 +16,7 @@ sys.path.insert(0, RESOLVER_DIR)
 
 RESOLVERS = [
     ('anime.anizone', 'AniZoneResolver', 'anizone'),
+    ('anime.hianime', 'HiAnimeResolver', 'hianime'),
     ('tmdb.castle', 'CastleResolver', 'castle'),
     ('tmdb.fsharetv', 'FshareTvResolver', 'fsharetv'),
     ('tmdb.hdhub', 'HdHubResolver', 'hdhub'),
