@@ -12,6 +12,7 @@ import traceback
 
 RESOLVER_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'providers')
+sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
 sys.path.insert(0, RESOLVER_DIR)
 
 RESOLVERS = [
@@ -33,12 +34,23 @@ RESOLVERS = [
     ('tmdb.vixsrc', 'VixSrcResolver', 'vixsrc'),
 ]
 
+LIVETV = [
+    'livetv.xumo',
+    'livetv.tubi',
+    'livetv.yupptv',
+    'livetv.us_local',
+    'livetv.samsung',
+    'livetv.roku',
+    'livetv.lgtv',
+    'livetv.iptv_org',
+]
+
 
 def main():
     parser = argparse.ArgumentParser(
         description='Aggregate resolver - runs all resolvers and combines results'
     )
-    parser.add_argument('url_or_id', help='TMDB ID or URL')
+    parser.add_argument('url_or_id', nargs='?', help='TMDB ID or URL')
     parser.add_argument('--type', choices=['movie', 'tv'], default='movie',
                         help='Media type (default: movie)')
     parser.add_argument('--season', type=int, help='Season number (for TV)')
@@ -127,7 +139,19 @@ def main():
             else:
                 sys.stderr.write(f"[{resolver_key}] Error: {e}\n")
 
-    output = json.dumps(aggregated, indent=2 if args.pretty else None)
+    for module_path in LIVETV:
+        resolver_key = module_path.split('.')[-1]
+        sys.stderr.write(f"[{resolver_key}] Fetching...\n")
+        try:
+            module = importlib.import_module(module_path)
+            data = module.get_data()
+            aggregated['resolvers'][resolver_key] = data
+            sys.stderr.write(f"[{resolver_key}] OK - {data.get('total', 0)} channels\n")
+        except Exception as e:
+            aggregated['resolvers'][resolver_key] = {'source': resolver_key, 'error': str(e)}
+            sys.stderr.write(f"[{resolver_key}] Error: {e}\n")
+
+    output = json.dumps(aggregated, indent=2 if args.pretty else None, ensure_ascii=False)
     print(output)
 
 

@@ -58,11 +58,20 @@ python providers/tmdb/fsharetv.py 550 --pretty
 
 ### Aggregate resolver
 
-Run **all** resolvers at once and get a combined JSON output:
+Run **all** resolvers and live TV playlists at once:
 
 ```bash
 python get_all.py 550
 python get_all.py 1396 --type tv --season 1 --episode 1 --pretty
+```
+
+### Live TV playlists
+
+Each script fetches an M3U playlist and outputs JSON with channel info:
+
+```bash
+python providers/livetv/xumo.py
+python providers/livetv/iptv_org.py
 ```
 
 > **Note:** The **ShowBox** resolver requires a `--ui-cookie`:
@@ -80,9 +89,23 @@ python get_all.py 1396 --type tv --season 1 --episode 1 --pretty
 
 ## Available Resolvers
 
+### Live TV (`livetv/`)
+
+| Module | Source | Channels |
+|---|---|---|
+| `xumo` | Xumo Playlist | M3U → JSON |
+| `tubi` | Tubi Playlist | M3U → JSON |
+| `yupptv` | YuppTV Playlist | M3U → JSON |
+| `us_local` | US Local Channels | M3U → JSON |
+| `samsung` | Samsung TV Plus | M3U → JSON |
+| `roku` | Roku Channel | M3U → JSON |
+| `lgtv` | LG TV Channels | M3U → JSON |
+| `iptv_org` | IPTV-org Global | M3U → JSON |
+
+### Anime (`anime/`)
+
 | Module | Class | Site | Movies | TV |
 |---|---|---|---|---|
-### Anime (`anime/`)
 
 | Module | Class | Site | Movies | TV |
 |---|---|---|---|---|
