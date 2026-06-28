@@ -136,7 +136,7 @@ python providers/torrent/supreme.py 550 --alldebrid AD_KEY --premiumize PM_KEY -
 ### Torrent (`torrent/`)
 
 | Module | Source | Requires |
-|---|---|---|---|
+|---|---|---|
 | `torrentio` | Torrentio Stremio | — |
 | `comet` | Comet (elfhosted) | Debrid API key(s) |
 | `easynews` | EasyNews Usenet | Username + password |
