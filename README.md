@@ -8,7 +8,7 @@ A collection of standalone Python resolvers that scrape streaming URLs from vari
 
 - **TMDB + Anime resolvers** — video stream extraction from 16 sources
 - **Live TV playlists** — M3U parsing from 9 providers (Xumo, Tubi, PlutoTV, etc.)
-- **Torrent providers** — magnet/direct streams from TorrentDL, Torrentio, Comet, EasyNews
+- **Torrent providers** — magnet/direct streams from TorrentDL, Torrentio, Comet, EasyNews, Supreme
 - **Consistent output** — every resolver returns a unified JSON structure
 - **Aggregate modes** — run groups at once (`get_all_tmdb.py`, `get_all_livetv.py`, `get_all_torrents.py`)
 - **No Kodi dependency** — fully standalone Python 3 scripts
@@ -81,7 +81,8 @@ Run all torrent/Usenet providers:
 ```bash
 python get_all_torrents.py 550
 python get_all_torrents.py 1399 --type tv --season 1 --episode 1
-python get_all_torrents.py 550 --realdebrid YOUR_KEY --username YOUR_EN_USER --password YOUR_EN_PASS
+python get_all_torrents.py 550 --realdebrid RD_KEY --alldebrid AD_KEY --premiumize PM_KEY --torbox TB_KEY
+python get_all_torrents.py 550 --username EN_USER --password EN_PASS
 ```
 
 ### Individual scripts
@@ -98,8 +99,9 @@ python providers/livetv/xumo.py
 
 # Torrent provider
 python providers/torrent/torrentio.py 550
-python providers/torrent/comet.py 550 --realdebrid YOUR_KEY
+python providers/torrent/comet.py 550 --realdebrid RD_KEY --alldebrid AD_KEY --premiumize PM_KEY --torbox TB_KEY
 python providers/torrent/easynews.py 550 --username USER --password PASS
+python providers/torrent/supreme.py 550 --alldebrid AD_KEY --premiumize PM_KEY --torbox TB_KEY
 ```
 
 > **Note:** The **ShowBox** resolver requires a `--ui-cookie`:
@@ -134,11 +136,11 @@ python providers/torrent/easynews.py 550 --username USER --password PASS
 ### Torrent (`torrent/`)
 
 | Module | Source | Requires |
-|---|---|---|
-| `torrentdl` | TorrentDL RSS | — |
+|---|---|---|---|
 | `torrentio` | Torrentio Stremio | — |
 | `comet` | Comet (elfhosted) | Debrid API key(s) |
 | `easynews` | EasyNews Usenet | Username + password |
+| `supreme` | Supreme (sup-nyp1.onrender.com) | Debrid API key(s) |
 
 ### Anime (`anime/`)
 
@@ -236,3 +238,9 @@ python providers/torrent/easynews.py 550 --username USER --password PASS
 | `--debug` | Enable verbose debug output |
 | `--pretty` | Pretty-print the JSON result |
 | `--ui-cookie` | FebBox UI token (ShowBox only) |
+| `--realdebrid` | RealDebrid API key (Comet) |
+| `--alldebrid` | AllDebrid API key (Comet, Supreme) |
+| `--premiumize` | Premiumize API key (Comet, Supreme) |
+| `--torbox` | TorBox API key (Comet, Supreme) |
+| `--username` | EasyNews username |
+| `--password` | EasyNews password |
