@@ -9,14 +9,15 @@ import importlib
 import os
 import sys
 
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+if sys.stdout.encoding is None or sys.stdout.encoding.upper() != 'UTF-8':
+    sys.stdout.reconfigure(encoding='utf-8')
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'providers'))
 
 TORRENT_PROVIDERS = [
-    'torrent.torrentdl',
     'torrent.torrentio',
     'torrent.comet',
     'torrent.easynews',
+    'torrent.supreme',
 ]
 
 
@@ -59,7 +60,7 @@ def main():
                 'episode': args.episode,
             }
 
-            if key == 'comet':
+            if key in ('comet', 'supreme'):
                 kwargs.update({
                     'realdebrid': args.realdebrid,
                     'torbox': args.torbox,

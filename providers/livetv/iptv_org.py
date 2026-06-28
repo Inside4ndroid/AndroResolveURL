@@ -10,7 +10,7 @@ import urllib.request
 import urllib.error
 import ssl
 
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+sys.stdout.reconfigure(encoding='utf-8')
 
 URL = "https://iptv-org.github.io/iptv/index.m3u"
 SOURCE = "iptv_org"

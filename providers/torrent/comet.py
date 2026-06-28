@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comet Provider – Fetches debrid-resolved streams from comet.elfhosted.com.
+Comet Provider â€“ Fetches debrid-resolved streams from comet.elfhosted.com.
 Requires debrid API keys passed via command line.
 """
 
@@ -12,7 +12,10 @@ import urllib.request
 import urllib.error
 import ssl
 
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+elif hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.upper() != 'UTF-8':
+    sys.stdout.reconfigure(encoding='utf-8')
 
 SOURCE = "comet"
 BASE_URL = "https://comet.elfhosted.com"

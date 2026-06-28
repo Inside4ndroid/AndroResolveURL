@@ -10,7 +10,7 @@ import urllib.request
 import urllib.error
 import ssl
 
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+sys.stdout.reconfigure(encoding='utf-8')
 
 URL = "https://raw.githubusercontent.com/abusaeeidx/IPTV-Scraper-Zilla/refs/heads/main/Roku-All.m3u"
 SOURCE = "roku"

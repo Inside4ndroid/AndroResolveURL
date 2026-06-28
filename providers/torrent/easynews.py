@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EasyNews Provider – Searches Usenet via members.easynews.com API.
+EasyNews Provider â€“ Searches Usenet via members.easynews.com API.
 Requires EasyNews username and password.
 Returns direct-playable video URLs (no torrents/magnets).
 """
@@ -14,7 +14,7 @@ import urllib.error
 import ssl
 from urllib.parse import urlencode
 
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+sys.stdout.reconfigure(encoding='utf-8')
 
 SOURCE = "easynews"
 BASE_URL = "https://members.easynews.com"

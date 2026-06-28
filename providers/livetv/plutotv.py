@@ -13,7 +13,7 @@ import urllib.error
 import ssl
 from datetime import datetime, timezone
 
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+sys.stdout.reconfigure(encoding='utf-8')
 
 SOURCE = "plutotv"
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"

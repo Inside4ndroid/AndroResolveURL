@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Torrentio Provider – Fetches torrent streams from torrentio.strem.fun Stremio addon.
+Torrentio Provider â€“ Fetches torrent streams from torrentio.strem.fun Stremio addon.
 Requires TMDB ID (resolved to IMDB ID internally).
 """
 
@@ -11,7 +11,7 @@ import urllib.request
 import urllib.error
 import ssl
 
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+sys.stdout.reconfigure(encoding='utf-8')
 
 SOURCE = "torrentio"
 BASE_URL = "https://torrentio.strem.fun/sort=seeders/stream"

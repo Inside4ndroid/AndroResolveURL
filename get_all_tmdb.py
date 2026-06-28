@@ -12,7 +12,7 @@ import traceback
 
 RESOLVER_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'providers')
-sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+sys.stdout.reconfigure(encoding='utf-8')
 sys.path.insert(0, RESOLVER_DIR)
 
 RESOLVERS = [
