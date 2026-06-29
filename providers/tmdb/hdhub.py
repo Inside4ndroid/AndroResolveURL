@@ -80,6 +80,16 @@ class HdHubResolver:
             pass
         return None
 
+    def _check_url(self, url, timeout=5):
+        try:
+            req = urllib.request.Request(url, method='HEAD')
+            req.add_header('User-Agent', HEADERS['User-Agent'])
+            req.add_header('Referer', 'https://hdhub.thevolecitor.qzz.io/')
+            resp = urllib.request.urlopen(req, timeout=timeout, context=self.ssl_context)
+            return resp.status == 200
+        except Exception:
+            return False
+
     def resolve(self, url_or_id, media_type='movie', season=None, episode=None):
         """
         Main method to resolve HdHub URL
@@ -177,6 +187,10 @@ class HdHubResolver:
         for stream in streams:
             url = stream.get('url')
             if not url:
+                continue
+
+            if not self._check_url(url):
+                self.log(f"Skipping dead URL: {url}", "DEBUG")
                 continue
 
             name = stream.get('name', 'HdHub')
